@@ -2,7 +2,8 @@
 
 ## Installation
 
-Copy the files matfilerw.jar and openmat_.jar from the releases to the `jars` subdirectory of your Fiji installation.
+Download the files `matfilerw.jar` and `openmat_.jar` from the `Assets` section in the recent [release](https://github.com/haesleinhuepf/OpenMAT/releases).
+Copy `matfilerw.jar` to the `jars` subdirectory of your Fiji installation and `openmat_.jar` to the `Plugins` subdirectory of Fiji.
 
 ## Usage
 
