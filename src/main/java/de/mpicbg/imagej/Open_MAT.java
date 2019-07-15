@@ -6,6 +6,8 @@ import com.jmatio.types.MLDouble;
 import com.jmatio.types.MLStructure;
 import ij.IJ;
 import ij.ImageJ;
+import ij.ImagePlus;
+import ij.plugin.Duplicator;
 import ij.plugin.PlugIn;
 import net.imglib2.RandomAccess;
 import net.imglib2.RandomAccessibleInterval;
@@ -24,6 +26,11 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 
+/**
+ *
+ * Author: Robert haesleinhuepf Haase, rhaase@mpi-cbg.de
+ * July 2019 at MBL Woods Hole
+ */
 public class Open_MAT implements PlugIn {
     @Override
     public void run(String s) {
@@ -38,7 +45,7 @@ public class Open_MAT implements PlugIn {
         try {
             mfr.read(new File(filename));
             MLArray content = mfr.getContent().get("IM_dat");
-            parseArray(content, "IM_dat", "IM_dat");
+            parseArray(content, filename + " > ", "IM_dat");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -49,7 +56,7 @@ public class Open_MAT implements PlugIn {
             MLStructure structure = (MLStructure) content;
             for (String key : structure.getFieldNames()) {
                 MLArray array = structure.getField(key);
-                parseArray(array, parent + "." + key, key);
+                parseArray(array, parent + "." + name, key);
             }
         } else if (content instanceof MLDouble) {
             MLDouble doubl = (MLDouble) content;
@@ -67,7 +74,10 @@ public class Open_MAT implements PlugIn {
                 view.dimensions(dims);
                 System.out.println("dim after: " + Arrays.toString(dims));
                 //view = Views.moveAxis(view, 1, 2);
-                ImageJFunctions.show(view, name);
+                ImagePlus imp = ImageJFunctions.wrap(view, parent + "." + name);
+                imp = new Duplicator().run(imp, 1, imp.getNChannels(), 1, imp.getNSlices(), 1, imp.getNFrames());
+                imp.show();
+                IJ.run(imp,"Enhance Contrast", "saturated=0.35");
             }
         }
     }
